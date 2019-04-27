@@ -1,14 +1,14 @@
-# A basic apache server. To use either add or bind mount content under /var/www
-FROM ubuntu:12.04
+# Install a more up to date mongodb than what is included in the default ubuntu repositories.
 
-MAINTAINER Kimbro Staken version: 0.1
+FROM ubuntu
+MAINTAINER Kimbro Staken
 
-RUN apt-get update && apt-get install -y apache2 && apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv 7F0CEB10
+RUN echo "deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen" | tee -a /etc/apt/sources.list.d/10gen.list
+RUN apt-get update
+RUN apt-get -y install apt-utils
+RUN apt-get -y install mongodb-10gen
 
-ENV APACHE_RUN_USER www-data
-ENV APACHE_RUN_GROUP www-data
-ENV APACHE_LOG_DIR /var/log/apache2
+#RUN echo "" >> /etc/mongodb.conf
 
-EXPOSE 80
-
-CMD ["/usr/sbin/apache2", "-D", "FOREGROUND"]
+CMD ["/usr/bin/mongod", "--config", "/etc/mongodb.conf"] 
